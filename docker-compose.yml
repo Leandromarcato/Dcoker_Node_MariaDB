@@ -1,0 +1,33 @@
+
+version: '3'
+
+services:
+  base_de_datos:
+    image: mariadb:10.6.14
+    container_name: productos
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+      MYSQL_DATABASE: mi_base_de_datos
+    ports: 
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql
+
+  servidor: 
+    container_name: backend
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PORT: 4000
+      DATABASE_HOST: base_de_datos
+      DATABASE_USERS: root
+      DATABASE_PASSWORD: mysecretpassword
+      DATABASE_NAME: mi_base_de_datos
+    restart: always
+    depends_on:
+      - base_de_datos
+    ports:
+      - 4000:4000
+    volumes:
+      - ./servidor:/servidor
